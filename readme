@@ -1,0 +1,25 @@
+# Phân tích Trade-off: Function Declaration vs Function Expression vs Arrow Function
+
+## 1. Mục tiêu
+- So sánh chi tiết 3 hình thức khai báo hàm trong JavaScript.
+- Phân tích cơ chế Hoisting, con trỏ `this`, và đối tượng `arguments` để tránh lỗi phát sinh.
+- Đưa ra quy chuẩn viết hàm thống nhất cho hệ thống Smart Home IoT.
+
+---
+
+## 2. Bảng so sánh Kỹ thuật (Trade-off Table)
+
+| Tiêu chuẩn | Function Declaration (`function fn()`) | Function Expression (`const fn = function()`) | Arrow Function (`const fn = () =>`) |
+| :--- | :--- | :--- | :--- |
+| **Cơ chế Hoisting** | **Được nâng lên đầu phạm vi.** Có thể gọi hàm trước khi định nghĩa. | **Không được nâng.** Báo lỗi `ReferenceError` nếu gọi trước khi khai báo. | **Không được nâng.** Báo lỗi `ReferenceError` nếu gọi trước khi khai báo. |
+| **Cú pháp** | Cổ điển, dài, dùng từ khóa `function`. | Phải gán vào biến (`const`/`let`). | Ngắn gọn nhất, hỗ trợ *implicit return* (trả về trực tiếp). |
+| **Con trỏ `this`** | **Động.** Phụ thuộc vào cách và nơi hàm được gọi. | **Động.** Phụ thuộc vào cách và nơi hàm được gọi. | **Tĩnh (Lexical `this`).** Kế thừa `this` từ ngữ cảnh bao ngoài nó (rất an toàn cho callback). |
+| **Đối tượng `arguments`**| Có hỗ trợ sẵn. | Có hỗ trợ sẵn. | Không hỗ trợ (Phải dùng toán tử *rest* `...args`). |
+| **Khuyến nghị chuẩn** | Dùng cho các hàm tiện ích toàn cục (Utilities). | Dùng khi cần định nghĩa hàm ẩn danh. | **Khuyến nghị chuẩn ES6+ cho toàn dự án.** |
+
+---
+
+## 3. Quy chuẩn Đề xuất cho Dự án Smart Home IoT
+Để hạn chế việc các thành viên viết code thiếu đồng nhất và phát sinh lỗi ngầm, dự án sẽ áp dụng quy chuẩn sau:
+1. **Mặc định sử dụng Arrow Function (`=>`):** Bắt buộc áp dụng cho mọi logic xử lý, vòng lặp, xử lý mảng (map, filter), và đặc biệt là các *Callback/Event Listeners* của thiết bị IoT. Arrow Function giúp tránh hoàn toàn lỗi mất con trỏ `this` khi truyền hàm qua lại.
+2. **Hạn chế Hoisting:** Việc dùng `const` kết hợp Arrow Function ép buộc lập trình viên phải định nghĩa hàm trước khi sử dụng, giúp luồng logic mã nguồn đi theo thứ tự từ trên xuống dưới, dễ debug và đọc hiểu hơn.
